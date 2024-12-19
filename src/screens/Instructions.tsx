@@ -1,24 +1,19 @@
 import { createConversation } from "@/api";
-import {
-  DialogWrapper,
-  AnimatedTextBlockWrapper,
-  StaticTextBlockWrapper,
-} from "@/components/DialogWrapper";
 import { screenAtom } from "@/store/screens";
 import { conversationAtom } from "@/store/conversation";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useAtom, useAtomValue } from "jotai";
-import { AlertTriangle, Mic, Video } from "lucide-react";
+import { Video, Phone } from "lucide-react";
 import { useDaily, useDailyEvent, useDevices } from "@daily-co/daily-react";
 import { ConversationError } from "./ConversationError";
-import zoomSound from "@/assets/sounds/zoom.mp3";
-import { Button } from "@/components/ui/button";
 import { apiTokenAtom } from "@/store/tokens";
-import { quantum } from 'ldrs';
-import santaVideo from "@/assets/video/gloria.mp4";
+import { hatch } from 'ldrs';
+import { Header } from "@/components/Header";
+import { motion } from "framer-motion";
+import { ConversationLoading } from "./ConversationLoading";
 
-// Register the quantum loader
-quantum.register();
+// Register the hatch loader
+hatch.register();
 
 const useCreateConversationMutation = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -49,40 +44,50 @@ const useCreateConversationMutation = () => {
   };
 };
 
+const questions = [
+  { 
+    question: "How to make my AI avatar more engaging?", 
+    expert: "Sarah Walker PhD" 
+  },
+  { 
+    question: "Best practices for AI video scripts", 
+    expert: "Sarah Walker PhD" 
+  },
+  { 
+    question: "Integrating AI videos into my website", 
+    expert: "Sarah Walker PhD" 
+  },
+  { 
+    question: "Making AI responses more natural", 
+    expert: "Sarah Walker PhD" 
+  },
+  { 
+    question: "Choosing the right AI voice", 
+    expert: "Sarah Walker PhD" 
+  },
+  { 
+    question: "AI avatar body language tips", 
+    expert: "Sarah Walker PhD" 
+  }
+];
+
 export const Instructions: React.FC = () => {
   const daily = useDaily();
-  const { currentMic, setMicrophone, setSpeaker } = useDevices();
+  const { currentMic } = useDevices();
   const { createConversationRequest } = useCreateConversationMutation();
-  const [getUserMediaError, setGetUserMediaError] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isLoadingConversation, setIsLoadingConversation] = useState(false);
   const [error, setError] = useState(false);
-  const audio = useMemo(() => {
-    const audioObj = new Audio(zoomSound);
-    audioObj.volume = 0.7;
-    return audioObj;
-  }, []);
-  const [isPlayingSound, setIsPlayingSound] = useState(false);
+  const [isCreatingConversation, setIsCreatingConversation] = useState(false);
 
   useDailyEvent(
     "camera-error",
     useCallback(() => {
-      setGetUserMediaError(true);
+      setError(true);
     }, []),
   );
 
-  const handleClick = async () => {
+  const startConversation = async () => {
     try {
-      setIsLoading(true);
-      setIsPlayingSound(true);
-      
-      audio.currentTime = 0;
-      await audio.play();
-      
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      setIsPlayingSound(false);
-      setIsLoadingConversation(true);
+      setIsCreatingConversation(true);
       
       let micDeviceId = currentMic?.device?.deviceId;
       if (!micDeviceId) {
@@ -92,168 +97,132 @@ export const Instructions: React.FC = () => {
           audioSource: "default",
         });
         // @ts-expect-error deviceId exists in the MediaDeviceInfo
-        const isDefaultMic = res?.mic?.deviceId === "default";
-        // @ts-expect-error deviceId exists in the MediaDeviceInfo
-        const isDefaultSpeaker = res?.speaker?.deviceId === "default";
-        // @ts-expect-error deviceId exists in the MediaDeviceInfo
         micDeviceId = res?.mic?.deviceId;
 
-        if (isDefaultMic) {
-          if (!isDefaultMic) {
-            setMicrophone("default");
-          }
-          if (!isDefaultSpeaker) {
-            setSpeaker("default");
-          }
+        if (!micDeviceId) {
+          setError(true);
+          return;
         }
       }
-      if (micDeviceId) {
-        await createConversationRequest();
-      } else {
-        setGetUserMediaError(true);
-      }
+
+      await createConversationRequest();
     } catch (error) {
       console.error(error);
       setError(true);
     } finally {
-      setIsLoading(false);
-      setIsLoadingConversation(false);
+      setIsCreatingConversation(false);
     }
   };
 
-  if (isPlayingSound || isLoadingConversation) {
-    return (
-      <DialogWrapper>
-        <video
-          src={santaVideo}
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="fixed inset-0 h-full w-full object-cover"
-        />
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" />
-        
-        <AnimatedTextBlockWrapper>
-          <div className="flex flex-col items-center justify-center gap-4">
-            <l-quantum
-              size="45"
-              speed="1.75"
-              color="white"
-            ></l-quantum>
-          </div>
-        </AnimatedTextBlockWrapper>
-      </DialogWrapper>
-    );
+  if (isCreatingConversation) {
+    return <ConversationLoading />;
   }
 
   if (error) {
-    return <ConversationError onClick={handleClick} />;
+    return <ConversationError onClick={startConversation} />;
   }
 
   return (
-    <DialogWrapper>
-      <video
-        src={santaVideo}
-        autoPlay
-        muted
-        loop
-        playsInline
-        className="fixed inset-0 h-full w-full object-cover"
-      />
-      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" />
+    <div className="flex size-full">
+      <div className="absolute inset-0 bg-[#0A0A0A]">
+        <img 
+          src="/images/back.jpeg" 
+          alt="Background" 
+          className="w-full h-full object-cover opacity-50"
+        />
+      </div>
       
-      <AnimatedTextBlockWrapper>
-        <div className="flex justify-center items-center gap-8 mb-2">
-          <div className="w-24 h-24 sm:w-32 sm:h-32">
-            <iframe 
-              src="https://giphy.com/embed/jOgyNBSHNqCuIv7gMa" 
-              width="100%" 
-              height="100%" 
-              frameBorder="0" 
-              className="giphy-embed" 
-              allowFullScreen
-            ></iframe>
-          </div>
-        </div>
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+      
+      <div className="absolute top-3 left-3 right-3 z-20">
+        <Header />
+      </div>
 
-        <h1 
-          className="mb-4 pt-1 text-center text-3xl sm:text-4xl lg:text-5xl font-semibold"
-          style={{
-            fontFamily: 'Source Code Pro, monospace'
-          }}
-        >
-          <span className="text-white">See AI?</span>{" "}
-          <span style={{
-            color: '#9EEAFF'
-          }}>Act Natural.</span>
+      <div className="relative z-10 flex w-full flex-col items-center justify-center px-12">
+        <h1 className="mb-6 -mt-8 text-3xl font-bold text-white text-center">
+          START AN <span className="bg-white text-black px-4 py-1 rounded-full">AI ✧</span> CALL
         </h1>
 
-        <p className="max-w-[650px] text-center text-base sm:text-lg text-gray-400 mb-12">
-          Have a face-to-face conversation with an AI so real, it feels human—an intelligent agent ready to listen, respond, and act across countless use cases.
-        </p>
-
-        <Button
-          onClick={handleClick}
-          className="relative z-20 flex items-center justify-center gap-2 rounded-3xl border border-[rgba(255,255,255,0.3)] px-8 py-2 text-sm text-white transition-all duration-200 hover:text-primary mb-12 disabled:opacity-50"
-          disabled={isLoading}
-          style={{
-            height: '48px',
-            transition: 'all 0.2s ease-in-out',
-            backgroundColor: 'rgba(0,0,0,0.3)',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.boxShadow = '0 0 15px rgba(34, 197, 254, 0.5)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.boxShadow = 'none';
-          }}
-        >
-          <Video className="size-5" />
-          Start Video Chat
-          {getUserMediaError && (
-            <div className="absolute -top-1 left-0 right-0 flex items-center gap-1 text-wrap rounded-lg border bg-red-500 p-2 text-white backdrop-blur-sm">
-              <AlertTriangle className="text-red size-4" />
-              <p>
-                To chat with the AI, please allow microphone access. Check your
-                browser settings.
-              </p>
+        <div className="flex gap-8 mb-12">
+          <motion.button 
+            onClick={startConversation}
+            className="text-center hover:opacity-90 transition-opacity"
+            animate={{ y: [0, -10, 0] }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          >
+            <div className="relative mb-2">
+              <div className="w-32 h-32 rounded-full overflow-hidden bg-[#4A90E2]">
+                <img 
+                  src="/images/head.png" 
+                  alt="Sarah Walker PhD"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="absolute bottom-0 right-0 bg-[#8B5CF6] rounded-full p-2">
+                <Video className="h-5 w-5 text-white" />
+              </div>
             </div>
-          )}
-        </Button>
+            <h3 className="text-white font-medium">Sarah Walker PhD</h3>
+            <p className="text-gray-400 text-sm">AI Expert</p>
+          </motion.button>
 
-        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:gap-8 text-gray-400 justify-center">
-          <div className="flex items-center gap-3 bg-[rgba(0,0,0,0.2)] px-4 py-2 rounded-full">
-            <Mic className="size-5 text-primary" />
-            Mic access is required
-          </div>
-          <div className="flex items-center gap-3 bg-[rgba(0,0,0,0.2)] px-4 py-2 rounded-full">
-            <Video className="size-5 text-primary" />
-            Camera access is required
-          </div>
+          <button 
+            onClick={startConversation}
+            className="text-center hover:opacity-90 transition-opacity"
+          >
+            <div className="relative mb-2">
+              <div className="w-32 h-32 rounded-full overflow-hidden bg-[#E77FB3]">
+                {/* Expert image would go here */}
+                <img src="/images/chris.jpg" alt="Chris Voss" className="w-full h-full object-cover" />
+              </div>
+              <div className="absolute bottom-0 right-0 bg-[#27AE60] rounded-full p-2">
+                <Phone className="h-5 w-5 text-white" />
+              </div>
+            </div>
+            <h3 className="text-white font-medium">Chris Voss</h3>
+            <p className="text-gray-400 text-sm">Communication Expert</p>
+          </button>
         </div>
 
-        <span className="absolute bottom-6 px-4 text-sm text-gray-500 sm:bottom-8 sm:px-8 text-center">
-          By starting a conversation, I accept the{' '}
-          <a href="#" className="text-primary hover:underline">Terms of Use</a> and acknowledge the{' '}
-          <a href="#" className="text-primary hover:underline">Privacy Policy</a>.
-        </span>
-      </AnimatedTextBlockWrapper>
-    </DialogWrapper>
+        <div className="w-full max-w-3xl">
+          <h2 className="text-white text-xl mb-4">Ask me anything</h2>
+          <div className="grid grid-cols-2 gap-4">
+            {questions.map((q, i) => (
+              <button
+                key={i}
+                onClick={startConversation}
+                className="flex items-center justify-between bg-[#1A1A1A] text-white p-4 rounded-2xl hover:bg-[#252525] text-left"
+              >
+                <div className="flex-1 min-w-0">
+                  <p className="text-left text-sm">{q.question}</p>
+                  <p className="text-sm text-gray-400">{q.expert}</p>
+                </div>
+                <Video className="h-5 w-5 ml-3 flex-shrink-0" />
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
 export const PositiveFeedback: React.FC = () => {
   return (
-    <DialogWrapper>
-      <AnimatedTextBlockWrapper>
-        <StaticTextBlockWrapper
-          imgSrc="/images/positive.png"
-          title="Great Conversation!"
-          titleClassName="sm:max-w-full bg-[linear-gradient(91deg,_#43BF8F_16.63%,_#FFF_86.96%)]"
-          description="Thanks for the engaging discussion. Feel free to come back anytime for another chat!"
-        />
-      </AnimatedTextBlockWrapper>
-    </DialogWrapper>
+    <div className="flex size-full items-center justify-center">
+      <div className="relative z-10 flex flex-col items-center text-center">
+        <img src="/images/positive.png" alt="Positive Feedback" className="mb-6 w-32" />
+        <h2 className="mb-4 text-3xl font-bold bg-clip-text text-transparent bg-[linear-gradient(91deg,_#43BF8F_16.63%,_#FFF_86.96%)]">
+          Great Conversation!
+        </h2>
+        <p className="text-gray-400">
+          Thanks for the engaging discussion. Feel free to come back anytime for another chat!
+        </p>
+      </div>
+    </div>
   );
 };

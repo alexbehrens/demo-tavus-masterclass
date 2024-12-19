@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import { healthCheckApi } from "@/api";
 import { screenAtom } from "@/store/screens";
 import { useAtom } from "jotai";
-import { quantum } from 'ldrs';
+import { hatch } from 'ldrs';
 
 const screens = {
-  error: "outage",
+  error: "intro",
   success: "intro",
-  outOfTime: "outOfMinutes",
+  outOfTime: "seasonEnded",
+  settings: "settings"
 } as const;
 
 const useHealthCheck = () => {
@@ -35,7 +36,7 @@ const useHealthCheck = () => {
   return { screenState };
 };
 
-quantum.register();
+hatch.register();
 
 export const IntroLoading: React.FC = () => {
   const { screenState } = useHealthCheck();
@@ -52,12 +53,25 @@ export const IntroLoading: React.FC = () => {
   }, [screenState]);
 
   return (
-    <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-      <l-quantum
-        size="45"
-        speed="1.75"
-        color="white"
-      ></l-quantum>
+    <div className="flex size-full items-center justify-center">
+      <div className="absolute inset-0 bg-[#0A0A0A]">
+        <img 
+          src="/images/back.jpeg" 
+          alt="Background" 
+          className="w-full h-full object-cover opacity-50"
+        />
+      </div>
+      
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+
+      <div className="relative z-10 flex size-full items-center justify-center">
+        <l-hatch
+          size="28"
+          stroke="4"
+          speed="3.5"
+          color="white"
+        ></l-hatch>
+      </div>
     </div>
   );
 };

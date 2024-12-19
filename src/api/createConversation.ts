@@ -21,7 +21,7 @@ export const createConversation = async (
   contextString += settings.context || "";
   
   const payload = {
-    persona_id: settings.persona || "pd43ffef",
+    persona_id: settings.persona || "p671206329de",
     custom_greeting: settings.greeting !== undefined && settings.greeting !== null 
       ? settings.greeting 
       : "Hey there! I'm your technical co-pilot! Let's get get started building with Tavus.",

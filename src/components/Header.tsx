@@ -19,11 +19,13 @@ export const Header = memo(() => {
 
   return (
     <header className="flex w-full items-start justify-between" style={{ fontFamily: 'Inter, sans-serif' }}>
-      <img
-        src="/images/logo.svg"
-        alt="Tavus"
-        className="relative h-6 sm:h-10"
-      />
+      <div className="flex items-center gap-1.5">
+        <span className="text-white text-sm font-medium">ON_CALL</span>
+        <span className="text-[10px] text-white/60 px-1 py-0.5 rounded border border-white/20">VIDEO ALPHA</span>
+      </div>
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+        <img src="/images/masterlogo.png" alt="Master Logo" className="h-8 w-auto" />
+      </div>
       <div className="relative">
         {settingsSaved && (
           <div className="absolute -top-2 -right-2 z-20 rounded-full bg-green-500 p-1 animate-fade-in">

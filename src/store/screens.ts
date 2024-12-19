@@ -1,25 +1,22 @@
 import { atom } from "jotai";
 
-export type Screen =
+export type Screen = 
   | "introLoading"
   | "outage"
   | "outOfMinutes"
-  | "intro"
-  | "instructions"
-  | "settings"
-  | "conversation"
-  | "conversationError"
-  | "positiveFeedback"
-  | "negativeFeedback"
+  | "intro" 
+  | "instructions" 
+  | "conversation" 
+  | "niceForm" 
+  | "naughtyForm" 
   | "finalScreen"
-  | "sessionEnded";
+  | "seasonEnded"
+  | "settings";
 
-interface ScreenState {
+export interface ScreenState {
   currentScreen: Screen;
 }
 
-const initialScreenState: ScreenState = {
-  currentScreen: "introLoading",
-};
-
-export const screenAtom = atom<ScreenState>(initialScreenState);
+export const screenAtom = atom<ScreenState>({
+  currentScreen: "intro",
+});

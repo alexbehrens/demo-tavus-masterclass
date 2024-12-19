@@ -1,8 +1,8 @@
 import { cn } from "@/utils";
 import { motion } from "framer-motion";
-import { quantum } from 'ldrs';
+import { hatch } from 'ldrs';
 
-quantum.register();
+hatch.register();
 
 const desktopClassName = "lg:aspect-video lg:max-h-none lg:h-auto";
 const tabletClassName = "sm:max-h-[680px]"; // sm
@@ -12,7 +12,8 @@ export const DialogWrapper = ({ children }: { children: React.ReactNode }) => {
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-2.5xl border-2 border-primary bg-wrapper shadow-wrapper-shadow backdrop-blur-sm",
+        "relative overflow-hidden rounded-2.5xl border-2 border-gray-700 bg-wrapper backdrop-blur-sm",
+        "shadow-[0_0_50px_-5px_rgba(255,100,100,0.5)]",
         desktopClassName,
         tabletClassName,
         mobileClassName,
@@ -25,11 +26,12 @@ export const DialogWrapper = ({ children }: { children: React.ReactNode }) => {
       />
       {children || (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
-          <l-quantum
-            size="45"
-            speed="1.75"
+          <l-hatch
+            size="28"
+            stroke="4"
+            speed="3.5"
             color="white"
-          ></l-quantum>
+          ></l-hatch>
           <p className="text-white text-lg">Loading...</p>
         </div>
       )}
@@ -56,6 +58,7 @@ export const AnimatedWrapper = ({
       }}
       className={cn(
         "relative overflow-hidden rounded-2.5xl border-2 border-primary bg-wrapper shadow-wrapper-shadow backdrop-blur-sm",
+        "shadow-[0_0_50px_-5px_rgba(255,0,0,0.5)]",
         desktopClassName,
         tabletClassName,
         mobileClassName,

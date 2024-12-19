@@ -4,7 +4,6 @@ import {
   useDaily,
   useLocalSessionId,
   useParticipantIds,
-  useVideoTrack,
   useAudioTrack,
 } from "@daily-co/daily-react";
 import React, { useCallback, useEffect, useState } from "react";
@@ -17,8 +16,6 @@ import { endConversation } from "@/api/endConversation";
 import {
   MicIcon,
   MicOffIcon,
-  VideoIcon,
-  VideoOffIcon,
   PhoneIcon,
 } from "lucide-react";
 import {
@@ -32,10 +29,13 @@ import { TIME_LIMIT } from "@/config";
 import { niceScoreAtom } from "@/store/game";
 import { naughtyScoreAtom } from "@/store/game";
 import { apiTokenAtom } from "@/store/tokens";
-import { quantum } from 'ldrs';
+import { hatch } from 'ldrs';
+import { motion } from "framer-motion";
+import { AnimatedTextBlockWrapper } from "@/components/DialogWrapper";
+import { Header } from "@/components/Header";
 
-// Register the quantum loader
-quantum.register();
+// Register the hatch loader
+hatch.register();
 
 const timeToGoPhrases = [
   "I'll need to dash off soon—there’s still so much to prepare for Christmas! But let’s make these last moments count.",
@@ -58,9 +58,7 @@ export const Conversation: React.FC = () => {
 
   const daily = useDaily();
   const localSessionId = useLocalSessionId();
-  const localVideo = useVideoTrack(localSessionId);
   const localAudio = useAudioTrack(localSessionId);
-  const isCameraEnabled = !localVideo.isOff;
   const isMicEnabled = !localAudio.isOff;
   const remoteParticipantIds = useParticipantIds({ filter: "remote" });
   const [start, setStart] = useState(false);
@@ -127,14 +125,6 @@ export const Conversation: React.FC = () => {
     }
   }, [conversation?.conversation_url]);
 
-  const toggleVideo = useCallback(() => {
-    daily?.setLocalVideo(!isCameraEnabled);
-  }, [daily, isCameraEnabled]);
-
-  const toggleAudio = useCallback(() => {
-    daily?.setLocalAudio(!isMicEnabled);
-  }, [daily, isMicEnabled]);
-
   const leaveConversation = useCallback(() => {
     daily?.leave();
     daily?.destroy();
@@ -153,69 +143,116 @@ export const Conversation: React.FC = () => {
   }, [daily, token]);
 
   return (
-    <DialogWrapper>
-      <div className="absolute inset-0 size-full">
-        {remoteParticipantIds?.length > 0 ? (
-          <>
-            <Timer />
-            <Video
-              id={remoteParticipantIds[0]}
-              className="size-full"
-              tileClassName="!object-cover"
-            />
-          </>
-        ) : (
-          <div className="flex h-full items-center justify-center">
-            <l-quantum
-              size="45"
-              speed="1.75"
-              color="white"
-            ></l-quantum>
-          </div>
-        )}
-        {localSessionId && (
-          <Video
-            id={localSessionId}
-            tileClassName="!object-cover"
-            className="absolute bottom-20 right-4 aspect-video h-40 w-24 overflow-hidden rounded-lg border-2 border-[#22C5FE] shadow-[0_0_20px_rgba(34,197,254,0.3)] sm:bottom-12 lg:h-auto lg:w-52"
-          />
-        )}
-        <div className="absolute bottom-8 right-1/2 z-10 flex translate-x-1/2 justify-center gap-4">
-          <Button
-            size="icon"
-            className="border border-[#22C5FE] shadow-[0_0_20px_rgba(34,197,254,0.2)]"
-            variant="secondary"
-            onClick={toggleAudio}
-          >
-            {!isMicEnabled ? (
-              <MicOffIcon className="size-6" />
-            ) : (
-              <MicIcon className="size-6" />
-            )}
-          </Button>
-          <Button
-            size="icon"
-            className="border border-[#22C5FE] shadow-[0_0_20px_rgba(34,197,254,0.2)]"
-            variant="secondary"
-            onClick={toggleVideo}
-          >
-            {!isCameraEnabled ? (
-              <VideoOffIcon className="size-6" />
-            ) : (
-              <VideoIcon className="size-6" />
-            )}
-          </Button>
-          <Button
-            size="icon"
-            className="bg-[rgba(251,36,71,0.80)] backdrop-blur hover:bg-[rgba(251,36,71,0.60)] border border-[rgba(251,36,71,0.9)] shadow-[0_0_20px_rgba(251,36,71,0.3)]"
-            variant="secondary"
-            onClick={leaveConversation}
-          >
-            <PhoneIcon className="size-6 rotate-[135deg]" />
-          </Button>
-        </div>
-        <DailyAudio />
+    <div className="flex size-full">
+      <div className="absolute inset-0 bg-[#0A0A0A]">
+        <img 
+          src="/images/back.jpeg" 
+          alt="Background" 
+          className="w-full h-full object-cover opacity-50"
+        />
       </div>
-    </DialogWrapper>
+      
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+
+      <div className="absolute top-3 left-3 right-3 z-20">
+        <Header />
+      </div>
+
+      <div className="relative z-10 flex size-full items-center justify-center -mt-[25px]">
+        <DialogWrapper>
+          <AnimatedTextBlockWrapper>
+            <motion.div 
+              className="absolute inset-0 size-full overflow-hidden rounded-lg border border-gray-700"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{
+                duration: 0.3,
+                ease: "easeOut"
+              }}
+            >
+              {remoteParticipantIds?.length > 0 ? (
+                <>
+                  <Timer />
+                  <Video
+                    id={remoteParticipantIds[0]}
+                    className="size-full"
+                    tileClassName="!object-cover"
+                  />
+                </>
+              ) : (
+                <div className="relative flex h-full items-center justify-center">
+                  <video
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    className="absolute inset-0 h-full w-full object-cover"
+                  >
+                    <source src="/src/assets/video/gloria.mp4" type="video/mp4" />
+                  </video>
+                  <div className="absolute inset-0 bg-black/30 backdrop-blur-md"></div>
+                  <div className="relative z-10">
+                    <l-hatch
+                      size="28"
+                      stroke="4"
+                      speed="3.5"
+                      color="white"
+                    ></l-hatch>
+                  </div>
+                </div>
+              )}
+              
+              {localSessionId && (
+                <Video
+                  id={localSessionId}
+                  tileClassName="!object-cover"
+                  className="absolute bottom-24 right-4 aspect-video h-32 w-48 overflow-hidden rounded-lg border border-white/20 shadow-lg"
+                />
+              )}
+
+              <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between px-6 py-4 bg-black/20 backdrop-blur-sm">
+                <div className="flex items-center gap-3">
+                  <img 
+                    src="/images/headshot.png" 
+                    alt="Avatar" 
+                    className="w-10 h-10 rounded-full"
+                  />
+                  <div className="flex flex-col">
+                    <span className="text-white text-sm font-medium">Sarah Walker PhD</span>
+                    <span className="text-white/60 text-xs">AI Whisperer</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={() => daily?.setLocalAudio(!isMicEnabled)}
+                    className="hover:bg-white/10"
+                  >
+                    {isMicEnabled ? (
+                      <MicIcon className="h-5 w-5 text-white" />
+                    ) : (
+                      <MicOffIcon className="h-5 w-5 text-white/60" />
+                    )}
+                  </Button>
+
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={leaveConversation}
+                    className="bg-red-500/80 hover:bg-red-500 rounded-full h-10 w-10 flex items-center justify-center"
+                  >
+                    <PhoneIcon className="h-5 w-5 text-white rotate-[135deg]" />
+                  </Button>
+                </div>
+              </div>
+              
+              <DailyAudio />
+            </motion.div>
+          </AnimatedTextBlockWrapper>
+        </DialogWrapper>
+      </div>
+    </div>
   );
 };
