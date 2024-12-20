@@ -5,14 +5,21 @@ import { useAtom } from "jotai";
 import { screenAtom } from "@/store/screens";
 import { conversationAtom } from "@/store/conversation";
 import { settingsSavedAtom } from "@/store/settings";
+import { apiTokenAtom } from "@/store/tokens";
 
 export const Header = memo(() => {
-  const [, setScreenState] = useAtom(screenAtom);
+  const [screenState, setScreenState] = useAtom(screenAtom);
   const [conversation] = useAtom(conversationAtom);
   const [settingsSaved] = useAtom(settingsSavedAtom);
+  const [token] = useAtom(apiTokenAtom);
 
   const handleSettings = () => {
-    if (!conversation) {
+    if (screenState.currentScreen === "settings") {
+      setScreenState({ 
+        currentScreen: token ? "instructions" : "intro" 
+      });
+    }
+    else if (!conversation) {
       setScreenState({ currentScreen: "settings" });
     }
   };

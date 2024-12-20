@@ -1,67 +1,65 @@
-# 🤖 Tavus AI Avatar Demo
+# 🤖 MasterClass OnCall Demo - Powered by Tavus CVI
 
-## 🌟 Welcome to the Future of Digital Interaction
+## 💡 Reimagining MasterClass with AI Video Interactions
 
-Step into tomorrow with Tavus's groundbreaking Conversational Video Interface (CVI) technology. This isn't just another chatbot – it's a gateway to hyperrealistic AI avatars powered by advanced artificial intelligence, capable of natural, dynamic interactions that blur the line between digital and reality.
+Experience the future of online learning with MasterClass OnCall - a proof of concept that combines MasterClass's premium educational content with Tavus's Conversational Video Interface (CVI) technology. This demo showcases how students could have personal, face-to-face conversations with AI versions of their favorite MasterClass instructors.
 
-![AI Avatar Demo](./public/images/demo.gif)
+### ✨ Key Features
+- **Interactive Instructor Sessions**: Have real-time conversations with AI versions of MasterClass instructors
+- **Personalized Learning**: Get tailored responses and demonstrations based on your specific questions
+- **Natural Interactions**: Experience fluid, human-like conversations through Tavus's hyperrealistic AI avatars
+- **Knowledge Preservation**: Access instructor expertise anytime, making learning truly on-demand
 
-### 🚀 Features That Push Boundaries
-- **Hyperrealistic AI Avatars**: Experience face-to-face conversations with AI that looks and feels incredibly human
-- **Real-time Intelligence**: Watch as your AI agent processes, thinks, and responds naturally
-- **Limitless Possibilities**: Create any persona you can imagine, from corporate executives to virtual companions
-- **Seamless Integration**: Built with cutting-edge tech for smooth, responsive interactions
+## 🔍 How It Works
 
-## 🛠️ Tech Stack
-- ⚛️ React
-- 📘 TypeScript
-- ⚡ Vite
-- 🎨 Tailwind CSS
-- 🎬 Framer Motion
+1. **Tavus CVI Technology**
+   - Converts instructor content into interactive AI personas
+   - Maintains authentic voice, mannerisms, and teaching style
+   - Enables natural, two-way conversations
+   - Provides real-time responses with instructor-specific knowledge
 
-## 🌐 Experience It Now
-Deploy your own AI avatar in seconds:
+2. **Integration Benefits**
+   - Scales instructor availability infinitely
+   - Offers 24/7 access to personalized instruction
+   - Enhances student engagement through interactive learning
+   - Preserves authentic instructor personalities
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/Tavus-Engineering/tavus-examples/tree/main/showcase/santa-demo?file=src%2FApp.tsx)
+## 🛠️ Technical Implementation
+- ⚛️ React + TypeScript frontend
+- 🎥 Tavus CVI for video interactions
+- 🎨 Tailwind CSS for styling
+- 🔄 Real-time conversation processing
 
-## 🔑 Getting Started
+## 🚀 Try the Demo
 
-1. **Access the Future**:
-   - Create your account at [Tavus Platform](https://platform.tavus.io/api-keys)
-   - Generate your API key to unlock the possibilities
-
-2. **Launch Your Instance**:
+1. **API Configuration**:
+   - Get your Tavus API key at [Tavus Platform](https://platform.tavus.io/api-keys)
+   - Set up your development environment:
    ```bash
    npm install
    npm run dev
    ```
 
-3. **Create Your Avatar**:
-   - Design your perfect AI persona through the [Tavus Platform](https://platform.tavus.io/)
-   - Update the `persona_id` in `createConversation.ts`:
+2. **Instructor Setup**:
+   - Create an instructor persona through the [Tavus Platform](https://platform.tavus.io/)
+   - Update the configuration:
    ```typescript
    body: JSON.stringify({
-     persona_id: "your_persona_id_here",
+     persona_id: "your_instructor_id_here",
    }),
    ```
 
-## 🔮 Customize & Innovate
-This demo is your canvas. Create corporate trainers, virtual assistants, digital companions – the only limit is your imagination. Each avatar can be customized with unique:
-- Personality traits
-- Knowledge domains
-- Interaction styles
-- Visual appearances
 
-## 🌈 Resources
+## 📚 Resources
 
-- 📚 [Developer Docs](https://docs.tavus.io/)
-- 🔧 [API Reference](https://docs.tavus.io/api-reference/)
-- 💫 [Tavus Platform](https://platform.tavus.io/)
-- 🎥 [Daily React Docs](https://docs.daily.co/reference/daily-react)
+- 🎥 [Tavus Documentation](https://docs.tavus.io/)
+- 🔌 [API Reference](https://docs.tavus.io/api-reference/)
+- 🎓 [Tavus Platform](https://platform.tavus.io/)
+- 📖 [CVI Implementation Guide](https://docs.tavus.io/sections/conversational-video-interface/cvi-overview)
 
 ---
 
 <p align="center">
-  <b>Welcome to the future of human-AI interaction</b><br>
-  Where digital avatars meet artificial intelligence
+  <b>The Future of Interactive Online Learning</b><br>
+  Powered by Tavus CVI Technology
 </p>

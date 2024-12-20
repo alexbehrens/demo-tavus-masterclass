@@ -46,7 +46,7 @@ const Input = React.forwardRef<
   return (
     <input
       className={cn(
-        "flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+        "flex h-10 w-full rounded-lg border border-[#404040] bg-transparent px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E32652] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
         className
       )}
       ref={ref}
@@ -64,7 +64,7 @@ const Textarea = React.forwardRef<
   return (
     <textarea
       className={cn(
-        "flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+        "flex min-h-[80px] w-full rounded-lg border border-[#404040] bg-transparent px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E32652] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
         className
       )}
       ref={ref}
@@ -120,7 +120,7 @@ const Select = React.forwardRef<
   return (
     <select
       className={cn(
-        "flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+        "flex h-10 w-full rounded-lg border border-[#404040] bg-transparent px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E32652] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
         className
       )}
       ref={ref}
@@ -130,6 +130,16 @@ const Select = React.forwardRef<
 });
 Select.displayName = "Select";
 
+// Add this component near the top with other component definitions
+const ActiveIndicator = () => (
+  <div className="size-2 rounded-full bg-green-500 inline-block ml-2" />
+);
+
+// Add a new InactiveIndicator component
+const InactiveIndicator = () => (
+  <div className="size-2 rounded-full bg-red-500 inline-block ml-2" />
+);
+
 export const Settings: React.FC = () => {
   const [settings, setSettings] = useAtom(settingsAtom);
   const [, setScreenState] = useAtom(screenAtom);
@@ -137,12 +147,12 @@ export const Settings: React.FC = () => {
   const [, setSettingsSaved] = useAtom(settingsSavedAtom);
 
   const languages = [
-    { label: "English", value: "en" },
-    { label: "Spanish", value: "es" },
-    { label: "French", value: "fr" },
-    { label: "German", value: "de" },
-    { label: "Italian", value: "it" },
-    { label: "Portuguese", value: "pt" },
+    { label: "English", value: "english" },
+    { label: "Spanish", value: "spanish" },
+    { label: "French", value: "french" },
+    { label: "German", value: "german" },
+    { label: "Italian", value: "italian" },
+    { label: "Portuguese", value: "portuguese" },
   ];
 
   const interruptSensitivities = [
@@ -206,24 +216,26 @@ export const Settings: React.FC = () => {
       <div className="relative z-10 flex size-full items-center justify-center -mt-[25px]">
         <DialogWrapper>
           <AnimatedTextBlockWrapper>
-            <div className="relative w-full max-w-2xl">
-              <div className="sticky top-0 pt-8 pb-6 z-10">
+            <div className="relative w-full max-w-2xl flex flex-col h-full">
+              <div className="sticky top-0 pt-8 pb-6 z-10 bg-background/30 backdrop-blur-sm">
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={handleClose}
-                  className="absolute right-0 top-8"
+                  className="absolute right-0 top-8 size-10 sm:size-14 border-0 bg-transparent hover:bg-zinc-800 rounded-full"
                 >
-                  <X className="size-6" />
+                  <X className="size-4 sm:size-6" />
                 </Button>
                 
-                <h2 className="text-2xl font-bold text-white">Settings</h2>
+                <h2 className="text-2xl font-bold text-white">Conversation Settings</h2>
               </div>
               
-              <div className="h-[calc(100vh-500px)] overflow-y-auto pr-4 -mr-4">
+              <div className="flex-grow overflow-y-auto pr-4 -mr-4">
+                <div className="h-5" />
+                
                 <div className="space-y-6">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Your Name</Label>
+                    <Label htmlFor="name">Your Name <ActiveIndicator /></Label>
                     <Input
                       id="name"
                       value={settings.name}
@@ -235,12 +247,12 @@ export const Settings: React.FC = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="language">Language</Label>
+                    <Label htmlFor="language">Language <InactiveIndicator /></Label>
                     <Select
                       id="language"
                       value={settings.language}
-                      onChange={(e) => setSettings({ ...settings, language: e.target.value })}
-                      className="bg-black/20 font-mono"
+                      disabled
+                      className="bg-black/20 font-mono opacity-50 cursor-not-allowed"
                       style={{ fontFamily: "'Source Code Pro', monospace" }}
                     >
                       {languages.map((lang) => (
@@ -257,12 +269,12 @@ export const Settings: React.FC = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="interruptSensitivity">Interrupt Sensitivity</Label>
+                    <Label htmlFor="interruptSensitivity">Interrupt Sensitivity <InactiveIndicator /></Label>
                     <Select
                       id="interruptSensitivity"
                       value={settings.interruptSensitivity}
-                      onChange={(e) => setSettings({ ...settings, interruptSensitivity: e.target.value })}
-                      className="bg-black/20 font-mono"
+                      disabled
+                      className="bg-black/20 font-mono opacity-50 cursor-not-allowed"
                       style={{ fontFamily: "'Source Code Pro', monospace" }}
                     >
                       {interruptSensitivities.map((sensitivity) => (
@@ -279,7 +291,7 @@ export const Settings: React.FC = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="greeting">Custom Greeting</Label>
+                    <Label htmlFor="greeting">Custom Greeting <ActiveIndicator /></Label>
                     <Input
                       id="greeting"
                       value={settings.greeting}
@@ -291,7 +303,7 @@ export const Settings: React.FC = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="context">Custom Context</Label>
+                    <Label htmlFor="context">Custom Context <ActiveIndicator /></Label>
                     <Textarea
                       id="context"
                       value={settings.context}
@@ -303,7 +315,7 @@ export const Settings: React.FC = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="persona">Set Custom Persona ID</Label>
+                    <Label htmlFor="persona">Set Custom Persona ID <ActiveIndicator /></Label>
                     <Input
                       id="persona"
                       value={settings.persona}
@@ -315,19 +327,47 @@ export const Settings: React.FC = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="replica">Set Custom Replica ID</Label>
+                    <Label htmlFor="replica">Set Custom Replica ID <InactiveIndicator /></Label>
                     <Input
                       id="replica"
                       value={settings.replica}
-                      onChange={(e) => setSettings({ ...settings, replica: e.target.value })}
-                      placeholder="rfb51183fe"
-                      className="bg-black/20 font-mono"
+                      disabled
+                      className="bg-black/20 font-mono opacity-50 cursor-not-allowed"
                       style={{ fontFamily: "'Source Code Pro', monospace" }}
                     />
                   </div>
 
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between opacity-50">
+                      <Label htmlFor="enableRecording">Enable Recording <InactiveIndicator /></Label>
+                      <Switch
+                        id="enableRecording"
+                        checked={settings.enableRecording}
+                        disabled
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between opacity-50">
+                      <Label htmlFor="enableTranscription">Enable Transcription <InactiveIndicator /></Label>
+                      <Switch
+                        id="enableTranscription"
+                        checked={settings.enableTranscription}
+                        disabled
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between opacity-50">
+                      <Label htmlFor="applyGreenscreen">Apply Greenscreen <InactiveIndicator /></Label>
+                      <Switch
+                        id="applyGreenscreen"
+                        checked={settings.applyGreenscreen}
+                        disabled
+                      />
+                    </div>
+                  </div>
+
                   <div className="space-y-2">
-                    <Label htmlFor="apiToken">API Token</Label>
+                    <Label htmlFor="apiToken">API Token <ActiveIndicator /></Label>
                     <Input
                       id="apiToken"
                       value={token || ""}
@@ -342,12 +382,14 @@ export const Settings: React.FC = () => {
                     />
                   </div>
                 </div>
+
+                <div className="h-5" />
               </div>
 
-              <div className="sticky bottom-0 mt-6 border-t border-gray-700 pt-6 pb-8">
+              <div className="flex-shrink-0 border-t border-gray-700 pt-6 pb-8">
                 <button
                   onClick={handleSave}
-                  className="hover:shadow-footer-btn relative flex items-center justify-center gap-2 rounded-3xl border border-[rgba(255,255,255,0.3)] bg-[rgba(255,255,255,0.1)] px-4 py-3 text-sm font-bold text-white transition-all duration-200 hover:text-primary"
+                  className="hover:shadow-[0_0_30px_rgba(227,38,82,0.5)] relative flex items-center justify-center gap-2 rounded-3xl border border-[rgba(255,255,255,0.3)] bg-[rgba(255,255,255,0.1)] px-4 py-3 text-sm font-bold text-white transition-all duration-200 hover:text-[#E32652]"
                 >
                   Save Changes
                 </button>

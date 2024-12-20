@@ -8,6 +8,11 @@ interface Settings {
   context: string;
   persona: string;
   replica: string;
+  enableRecording?: boolean;
+  enableTranscription?: boolean;
+  applyGreenscreen?: boolean;
+  maxCallDuration?: number;
+  participantLeftTimeout?: number;
 }
 
 const getInitialSettings = (): Settings => {
@@ -17,12 +22,17 @@ const getInitialSettings = (): Settings => {
   }
   return {
     name: "",
-    language: "en",
+    language: "english",
     interruptSensitivity: "medium",
     greeting: "",
     context: "",
     persona: "",
     replica: "",
+    enableRecording: false,
+    enableTranscription: false,
+    applyGreenscreen: false,
+    maxCallDuration: 3600,
+    participantLeftTimeout: 60,
   };
 };
 
